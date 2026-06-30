@@ -233,8 +233,7 @@ Reglas:
             tools=tools,
             name="SalidasBot",
             description="Bot inteligente para buscar salidas en Buenos Aires",
-            additional_authorized_imports=["json", "requests"],
-            system_prompt=self.system_prompt
+            additional_authorized_imports=["json", "requests"]
         )
     
     def chat(self, user_input: str) -> str:
@@ -251,19 +250,22 @@ Reglas:
         self.memory.add_message("user", user_input)
         
         try:
-            # Construir prompt con historial para multi-turno
+            # Construir prompt con system_prompt + historial para multi-turno
             recent = self.memory.short_term.get_recent_context(limit=6)
             # Excluir el mensaje que acabamos de agregar (el último)
             history_msgs = recent[:-1]
+            
+            # Construir prompt con instrucción del sistema
+            system_context = f"{self.system_prompt}\n\n"
             
             if history_msgs:
                 history_text = "\n".join(
                     f"{'Usuario' if m['role'] == 'user' else 'Asistente'}: {m['content']}"
                     for m in history_msgs
                 )
-                prompt = f"Historial de conversación:\n{history_text}\n\nUsuario: {user_input}"
+                prompt = f"{system_context}Historial:\n{history_text}\n\nUsuario: {user_input}"
             else:
-                prompt = user_input
+                prompt = f"{system_context}Usuario: {user_input}"
             
             # Llamar al agent con contexto
             response = self.agent.run(prompt)

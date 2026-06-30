@@ -33,7 +33,7 @@ def respond(message: str, history: list) -> tuple:
 
     Args:
         message: Mensaje del usuario
-        history: Historial de chat de Gradio [[user, bot], ...]
+        history: Historial de chat de Gradio (lista de dicts con role/content)
 
     Returns:
         ("", history actualizado)
@@ -50,7 +50,15 @@ def respond(message: str, history: list) -> tuple:
             "Verificá que GROQ_API_KEY esté configurada en el archivo .env"
         )
 
-    history.append((message, response))
+    # Agregar al historial en formato correcto para Chatbot
+    history.append({
+        "role": "user",
+        "content": message
+    })
+    history.append({
+        "role": "assistant", 
+        "content": response
+    })
     return "", history
 
 
@@ -73,16 +81,12 @@ Tu guía inteligente para salir en Buenos Aires. Preguntame sobre **bares**, **r
 **Ejemplos:** *"Bares en Palermo"* · *"¿Hay lluvia hoy?"* · *"Mejores restaurantes de asado"* · *"Qué hay en San Telmo?"*
 """
 
-with gr.Blocks(
-    title="🤖 Salidas Bot",
-    theme=gr.themes.Soft(primary_hue="violet"),
-) as demo:
+with gr.Blocks(title="🤖 Salidas Bot") as demo:
     gr.Markdown(DESCRIPTION)
 
     chatbot = gr.Chatbot(
         label="Chat con Salidas Bot",
         height=480,
-        bubble_full_width=False,
         show_label=False,
     )
 
@@ -111,4 +115,4 @@ with gr.Blocks(
 
 
 if __name__ == "__main__":
-    demo.launch(show_error=True)
+    demo.launch(show_error=True, theme=gr.themes.Soft(primary_hue="violet"))
