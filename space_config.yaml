@@ -1,0 +1,17 @@
+# Para deployar en HuggingFace Spaces con Gradio
+
+title: Salidas Bot
+emoji: 🤖
+colorFrom: purple
+colorTo: pink
+sdk: gradio
+sdk_version: 4.31.0
+app_file: app_gradio.py
+pinned: false
+license: mit
+
+# Configuración adicional
+python_version: 3.11
+
+# Archivos de secrets necesarios:
+# - GROQ_API_KEY: Tu clave de API de Groq
